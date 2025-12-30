@@ -2,7 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000/api/articles";
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API = `${API_BASE}/api/articles`;
 
 export default function CreateArticle() {
   const [formData, setFormData] = useState({

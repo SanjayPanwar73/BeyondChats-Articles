@@ -2,7 +2,8 @@ import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000/api/articles";
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API = `${API_BASE}/api/articles`;
 
 export default function ArticleDetail() {
   const { id } = useParams();
