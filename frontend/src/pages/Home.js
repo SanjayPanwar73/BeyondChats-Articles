@@ -3,7 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ArticleCard from "../components/ArticleCard.js";
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+// Temporary fix: hardcode production URL
+const API_BASE = "https://beyondchats-backend-1pir.onrender.com";
 const API = `${API_BASE}/api/articles`;
 
 export default function Home() {
