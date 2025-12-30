@@ -1,4 +1,5 @@
 const Article = require("../models/Article");
+const { updateArticles } = require("../../scripts/updateArticles");
 
 // Input validation helper
 const validateArticleData = (data) => {
@@ -169,5 +170,29 @@ exports.deleteArticle = async (req, res) => {
     res.json({ message: "Article deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateArticles = async (req, res) => {
+  try {
+    // Optional API key protection
+    const apiKey = req.headers['x-api-key'];
+    if (process.env.API_KEY && apiKey !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid API key' });
+    }
+
+    // Start the update process asynchronously (non-blocking)
+    updateArticles().catch(error => {
+      console.error('Background update articles failed:', error);
+    });
+
+    // Return success immediately
+    res.json({
+      message: 'Article update process started successfully',
+      status: 'processing'
+    });
+  } catch (error) {
+    console.error('Start update articles error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

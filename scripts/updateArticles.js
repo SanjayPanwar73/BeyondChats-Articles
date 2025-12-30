@@ -20,7 +20,6 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const OpenAI = require("openai");
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const API = process.env.API_BASE;
 
 async function googleSearch(query) {
@@ -83,6 +82,7 @@ async function scrapeContent(url) {
 
 async function rewrite(original, ref1, ref2, links) {
   try {
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{
@@ -131,7 +131,13 @@ Please provide the rewritten article with citations at the end.
   }
 }
 
-async function run() {
+/**
+ * Updates articles by enhancing them with external references and AI rewriting.
+ * This function can be called from an API endpoint to run the process asynchronously.
+ *
+ * @returns {Promise<void>} Resolves when the update process completes
+ */
+async function updateArticles() {
   try {
     console.log("Starting article update process...");
 
@@ -198,9 +204,9 @@ async function run() {
     console.log(`\nProcess completed. Success: ${successCount}, Failed: ${failCount}`);
 
   } catch (error) {
-    console.error("Script failed:", error.message);
-    process.exit(1);
+    console.error("Update articles process failed:", error.message);
+    throw error; // Re-throw to allow caller to handle
   }
 }
 
-run();
+module.exports = { updateArticles };
