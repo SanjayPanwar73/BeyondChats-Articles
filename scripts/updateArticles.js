@@ -135,8 +135,8 @@ async function run() {
   try {
     console.log("Starting article update process...");
 
-    const { data: articles } = await axios.get(`${API}/articles`, { timeout: 10000 });
-    const articlesToUpdate = articles.filter(a => !a.isUpdated);
+    const { data } = await axios.get(`${API}/articles`, { timeout: 10000 });
+    const articlesToUpdate = data.articles.filter(a => !a.isUpdated);
 
     console.log(`Found ${articlesToUpdate.length} articles to update.`);
 

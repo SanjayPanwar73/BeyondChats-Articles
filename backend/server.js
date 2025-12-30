@@ -42,10 +42,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Database connection with retry logic
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('Database connection error:', error.message);
@@ -53,40 +50,42 @@ const connectDB = async () => {
   }
 };
 
-connectDB();
+(async () => {
+  await connectDB();
 
-app.use("/api/articles", articleRoutes);
+  app.use("/api/articles", articleRoutes);
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
-
-// Global error handler
-app.use((error, req, res, next) => {
-  console.error('Global error handler:', error);
-
-  if (error.type === 'entity.parse.failed') {
-    return res.status(400).json({ message: 'Invalid JSON payload' });
-  }
-
-  res.status(500).json({
-    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message
+  // 404 handler
+  app.use('*', (req, res) => {
+    res.status(404).json({ message: 'Route not found' });
   });
-});
 
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
-});
+  // Global error handler
+  app.use((error, req, res, next) => {
+    console.error('Global error handler:', error);
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    mongoose.connection.close(false, () => {
-      console.log('Process terminated');
-      process.exit(0);
+    if (error.type === 'entity.parse.failed') {
+      return res.status(400).json({ message: 'Invalid JSON payload' });
+    }
+
+    res.status(500).json({
+      message: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message
     });
   });
-});
+
+  const PORT = process.env.PORT || 5000;
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+      mongoose.connection.close(false, () => {
+        console.log('Process terminated');
+        process.exit(0);
+      });
+    });
+  });
+})();
