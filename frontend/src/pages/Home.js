@@ -73,14 +73,17 @@ export default function Home() {
         alignItems: "center",
         marginBottom: "30px"
       }}>
-        <h1 style={{
-          margin: "0",
-          color: "#1f2937",
-          fontSize: "2.5rem",
-          fontWeight: "bold"
-        }}>
-          BeyondChats Articles
-        </h1>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img src="/RankWrite_logo.png" alt="RankWrite Logo" style={{ height: "50px", marginRight: "10px" }} />
+          <h1 style={{
+            margin: "0",
+            color: "#1f2937",
+            fontSize: "2.5rem",
+            fontWeight: "bold"
+          }}>
+            BeyondChats Articles
+          </h1>
+        </div>
 
         <Link
           to="/create"
